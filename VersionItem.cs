@@ -1,6 +1,6 @@
 ﻿namespace GitHubReleases
 {
-    internal struct VersionItem
+    public struct VersionItem
     {
         public int Id;
         public string VersionStamp;

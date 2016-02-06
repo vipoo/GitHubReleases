@@ -1,6 +1,6 @@
 ﻿namespace GitHubReleases
 {
-    internal struct RepoKey
+    public struct RepoKey
     {
         public string User;
         public string Repo;

@@ -1,5 +1,4 @@
-﻿using iRacingApplicationVersionManger.Properties;
-using Octokit;
+﻿using Octokit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +27,7 @@ namespace GitHubReleases
         public static async Task<VersionItem[]> GetVersions(string user, string repo)
         {
             var key = new RepoKey { Repo = repo, User = user };
-            var allReleases = Settings.Default.GitHubCachedReleases == null ? new List<GitHubCachedReleases>() : Settings.Default.GitHubCachedReleases.ToList();
+            var allReleases = GitHubAccessSettings.GitHubCachedReleases == null ? new List<GitHubCachedReleases>() : GitHubAccessSettings.GitHubCachedReleases.ToList();
             var cacheHit = allReleases.FirstOrDefault(r => r.Key.Equals(key));
 
             if (cacheHit != null && cacheHit.RetreivedAt.AddHours(1) > DateTime.Now)
@@ -45,8 +44,8 @@ namespace GitHubReleases
 
             allReleases.Add(new GitHubCachedReleases { Key = key, Data = versionReleases, RetreivedAt = DateTime.Now });
 
-            Settings.Default.GitHubCachedReleases = allReleases.ToArray();
-            Settings.Default.Save();
+            GitHubAccessSettings.GitHubCachedReleases = allReleases.ToArray();
+            GitHubAccessSettings.Save();
 
             return versionReleases;
         }

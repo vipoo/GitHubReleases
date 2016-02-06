@@ -2,7 +2,7 @@
 
 namespace GitHubReleases
 {
-    internal class GitHubCachedReleases : GitHubCachedResult<RepoKey, VersionItem[]>
+    public class GitHubCachedReleases : GitHubCachedResult<RepoKey, VersionItem[]>
     {
         public VersionItem[] Data { get; set; }
         public RepoKey Key { get; set; }
