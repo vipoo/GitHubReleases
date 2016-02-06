@@ -7,11 +7,11 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 
-internal class PortableSettingsProvider : SettingsProvider
+internal abstract class PortableSettingsProvider : SettingsProvider
 {
-    public static void MakePortable(ApplicationSettingsBase settings)
+    public static void MakePortable<T>(ApplicationSettingsBase settings) where T : PortableSettingsProvider
     {
-        var pp = settings.Providers.OfType<PortableSettingsProvider>().First();
+        var pp = settings.Providers.OfType<T>().First();
 
         foreach (SettingsProperty p in settings.Properties)
             p.Provider = pp;
@@ -42,10 +42,7 @@ internal class PortableSettingsProvider : SettingsProvider
         return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
     }
 
-    public virtual string GetAppSettingsFilename()
-    {
-        return "iracing-application-version-manager.settings";
-    }
+    public abstract string GetAppSettingsFilename();
 
     public override void SetPropertyValues(SettingsContext context, SettingsPropertyValueCollection propvals)
     {
