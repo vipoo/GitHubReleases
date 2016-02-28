@@ -130,6 +130,13 @@ internal abstract class PortableSettingsProvider : SettingsProvider
             SettingsXML.SelectSingleNode(SETTINGSROOT).AppendChild(SettingNode);
         }
 
-        SettingNode.InnerText = propVal.SerializedValue == null ? null : propVal.SerializedValue.ToString();
+        if (propVal.SerializedValue != null && propVal.SerializedValue.ToString().StartsWith("<?"))
+        {
+            var cdata = SettingsXML.CreateCDataSection(propVal.SerializedValue.ToString());
+            SettingNode.RemoveAll();
+            SettingNode.AppendChild(cdata);
+        }
+        else
+            SettingNode.InnerText = propVal.SerializedValue == null ? null : propVal.SerializedValue.ToString();
     }
 }
