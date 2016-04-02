@@ -28,6 +28,10 @@ namespace GitHubReleases
         {
             var key = new RepoKey { Repo = repo, User = user };
             var allReleases = GitHubAccessSettings.GitHubCachedReleases == null ? new List<GitHubCachedReleases>() : GitHubAccessSettings.GitHubCachedReleases.ToList();
+
+            //Clean data, due to previous bug of not reusing cached items.
+            allReleases = allReleases.GroupBy(r => r.Key.Equals(key)).Select( r => r.First() ).ToList();
+
             var cacheHit = allReleases.FirstOrDefault(r => r.Key.Equals(key));
 
             if (cacheHit != null && cacheHit.RetreivedAt.AddHours(1) > DateTime.Now)
@@ -42,7 +46,13 @@ namespace GitHubReleases
                     .Select(r => new VersionItem { Prerelease = r.Prerelease, DateTimeStamp = r.CreatedAt.ToString(), VersionStamp = r.TagName, Id = r.Id })
                     .ToArray();
 
-            allReleases.Add(new GitHubCachedReleases { Key = key, Data = versionReleases, RetreivedAt = DateTime.Now });
+            if( cacheHit == null)
+                allReleases.Add(new GitHubCachedReleases { Key = key, Data = versionReleases, RetreivedAt = DateTime.Now });
+            else
+            {
+                cacheHit.Data = versionReleases;
+                cacheHit.RetreivedAt = DateTime.Now;
+            }
 
             GitHubAccessSettings.GitHubCachedReleases = allReleases.ToArray();
             GitHubAccessSettings.Save();
